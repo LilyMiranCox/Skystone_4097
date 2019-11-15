@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
@@ -12,6 +13,10 @@ public class Holonomic extends OpMode {
     DcMotor frontLeft;
     DcMotor rearRight;
     DcMotor rearLeft;
+    DcMotor Grab1, Grab2;
+
+    //Servos
+    CRServo Tail,Tail2;
 
     //Variables
     float i=1.0f;
@@ -42,6 +47,10 @@ public class Holonomic extends OpMode {
         frontRight = hardwareMap.dcMotor.get("FR");
         rearLeft = hardwareMap.dcMotor.get("RL");
         rearRight = hardwareMap.dcMotor.get("RR");
+        Grab1=hardwareMap.dcMotor.get("Grab1");
+        Grab2=hardwareMap.dcMotor.get("Grab2");
+        Tail=hardwareMap.crservo.get("Tail");
+        Tail2=hardwareMap.crservo.get("Tail2");
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         rearRight.setDirection(DcMotor.Direction.REVERSE);
@@ -57,6 +66,33 @@ public class Holonomic extends OpMode {
     {
         holonomicFormula();
         setDriveChainPower();
+        if(gamepad1.right_trigger > 0) {
+            Grab1.setPower(gamepad1.right_trigger);
+            Grab2.setPower(gamepad1.right_trigger);
+        }
+        else if(gamepad1.left_trigger > 0) {
+            Grab1.setPower(-gamepad1.left_trigger);
+            Grab2.setPower(-gamepad1.left_trigger);
+        }
+        else if(gamepad1.right_trigger <= 0 && gamepad1.left_trigger <= 0) {
+            Grab1.setPower(0);
+            Grab2.setPower(0);
+        }
+
+        if(gamepad1.right_bumper) {
+            Tail.setPower(0.5);
+            Tail2.setPower(-0.5);
+        }
+        else if(gamepad1.left_bumper) {
+            Tail.setPower(-0.5);
+            Tail2.setPower(0.5);
+        }
+        else if(!gamepad1.right_bumper && !gamepad1.left_bumper){
+            Tail.setPower(0.0);
+            Tail2.setPower(0.0);
+        }
+
+
     }
 
     public void getJoyValues()
