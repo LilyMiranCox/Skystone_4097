@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+import java.lang.Float;
 
 @TeleOp(name="Base2.0", group="tele")
 public class Holonomic extends OpMode {
@@ -13,12 +14,13 @@ public class Holonomic extends OpMode {
     DcMotor frontLeft;
     DcMotor rearRight;
     DcMotor rearLeft;
-    DcMotor Grab1, Grab2;
+    DcMotor Grab1, Grab2, Lift1, Lift2;
 
     //Servos
     CRServo Tail,Tail2;
 
     //Variables
+    int count =0;
     float i=1.0f;
     float leftStickY;
     float leftStickX;
@@ -39,6 +41,15 @@ public class Holonomic extends OpMode {
     @Override
     public void loop() {
         controls();
+        if(gamepad1.a){
+            //count++;
+            if(Float.compare(i,1.0f) == 0){
+                i=0.5f;
+            }
+            else{
+                i=1.0f;
+            }
+        }
     }
     public void runInitSequence()
     {
@@ -51,6 +62,8 @@ public class Holonomic extends OpMode {
         Grab2=hardwareMap.dcMotor.get("Grab2");
         Tail=hardwareMap.crservo.get("Tail");
         Tail2=hardwareMap.crservo.get("Tail2");
+        Lift1=hardwareMap.dcMotor.get("Lift1");
+        Lift2=hardwareMap.dcMotor.get("Lift2");
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         rearRight.setDirection(DcMotor.Direction.REVERSE);
@@ -68,11 +81,11 @@ public class Holonomic extends OpMode {
         setDriveChainPower();
         if(gamepad1.right_trigger > 0) {
             Grab1.setPower(gamepad1.right_trigger);
-            Grab2.setPower(gamepad1.right_trigger);
+            Grab2.setPower(-gamepad1.right_trigger);
         }
         else if(gamepad1.left_trigger > 0) {
             Grab1.setPower(-gamepad1.left_trigger);
-            Grab2.setPower(-gamepad1.left_trigger);
+            Grab2.setPower(gamepad1.left_trigger);
         }
         else if(gamepad1.right_trigger <= 0 && gamepad1.left_trigger <= 0) {
             Grab1.setPower(0);
@@ -92,6 +105,18 @@ public class Holonomic extends OpMode {
             Tail2.setPower(0.0);
         }
 
+        if(gamepad1.dpad_up){
+            Lift1.setPower(1);
+            Lift2.setPower(-1);
+        }
+        else if(gamepad1.dpad_down){
+            Lift1.setPower(-1);
+            Lift2.setPower(1);
+        }
+        else if(!gamepad1.dpad_down&& !gamepad1.dpad_up){
+            Lift1.setPower(0);
+            Lift2.setPower(0);
+        }
 
     }
 
@@ -99,7 +124,7 @@ public class Holonomic extends OpMode {
     {
         leftStickY = gamepad1.left_stick_y;
         leftStickX = gamepad1.left_stick_x;
-        rightStickX = gamepad1.right_stick_x;
+        rightStickX = 0.5f*gamepad1.right_stick_x;
     }
 
     public void holonomicFormula()
@@ -121,12 +146,7 @@ public class Holonomic extends OpMode {
         RL_power = i*RL_power;
         RR_power=i*RR_power;
 
-        if(gamepad1.y){
-            i=0.5f;
-        }
-        if(gamepad1.b){
-            i=1.0f;
-        }
+
     }
 
     public void setDriveChainPower()
