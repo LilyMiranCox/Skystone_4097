@@ -20,8 +20,10 @@ public class Holonomic extends OpMode {
     CRServo Tail,Tail2;
 
     //Variables
+    double stop=0.25;
     int count =0;
     float i=1.0f;
+    boolean Gravity=true;
     float leftStickY;
     float leftStickX;
     float rightStickX;
@@ -42,12 +44,14 @@ public class Holonomic extends OpMode {
     public void loop() {
         controls();
         if(gamepad1.a){
-            //count++;
-            if(Float.compare(i,1.0f) == 0){
+            count++;
+            //Float.compare(i,1.0f) == 0
+            if(count==1){
                 i=0.5f;
             }
-            else{
-                i=1.0f;
+            else if(count==2) {
+                i = 1.0f;
+                count=0;
             }
         }
     }
@@ -105,13 +109,18 @@ public class Holonomic extends OpMode {
             Tail2.setPower(0.0);
         }
 
-        if(gamepad1.dpad_up){
-            Lift1.setPower(1);
-            Lift2.setPower(-1);
+        /*if(Gravity) {
+            Lift1.setPower(stop);
+            Lift2.setPower(-stop);
+        }*/
+
+        if(gamepad1.y){//Chance first code
+            Lift1.setPower(0.4);
+            Lift2.setPower(-0.4);
         }
-        else if(gamepad1.dpad_down){
-            Lift1.setPower(-1);
-            Lift2.setPower(1);
+        else if(gamepad1.x){
+            Lift1.setPower(-0.3);
+            Lift2.setPower(0.3);
         }
         else if(!gamepad1.dpad_down&& !gamepad1.dpad_up){
             Lift1.setPower(0);
