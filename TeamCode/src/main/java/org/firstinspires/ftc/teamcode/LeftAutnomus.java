@@ -11,14 +11,16 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Autonomous(name="SkyStoneAutonomus", group="Autonomous")
 public class LeftAutnomus extends LinearOpMode {
     DcMotor FleftDrive, BleftDrive, FrightDrive, BrightDrive, George;
-    double Value;
+    double Value =0;
 
     ColorSensor sensorColor;
     ModernRoboticsI2cRangeSensor rangeSensor;
-
+    int RangeV;
     //Functions:
 
     void mySleep(long interval, String msg) {
@@ -103,8 +105,8 @@ public class LeftAutnomus extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //Sensors:
-        //sensorColor = hardwareMap.get(ColorSensor.class, "ColorSensor");
-        //rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
+        sensorColor = hardwareMap.get(ColorSensor.class, "ColorSensor");
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
 
         //Drive:
         FleftDrive = hardwareMap.dcMotor.get("FL");
@@ -120,18 +122,33 @@ public class LeftAutnomus extends LinearOpMode {
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
 
         waitForStart();
+
+
         while (opModeIsActive()) {
+            RangeV=rangeSensor.rawUltrasonic();
+            telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
+            telemetry.addData("raw optical", rangeSensor.rawOptical());
+            //telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
+            //telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
+            //telemetry.update();
+       // while(Value >= 2) {
 
-
-            Forward(0.3);
-            sleep(500);
-            Stop();
+            //Forward(0.3);
+            //sleep(500);
+            //Stop();
             //Color Sensor Part:
             /*if (sensorColor.blue() > sensorColor.red()){
                 stop();
             }*/
-         //   Value=(sensorColor.red()*sensorColor.green())/Math.pow(sensorColor.blue(), 2);
-
+            Value=(sensorColor.red()*sensorColor.green())/Math.pow(sensorColor.blue(), 2);
+            if(Value<2 && RangeV<13){
+                telemetry.addData("Found:", Value);
+                telemetry.update();
+            }
+            else{
+                telemetry.addData("Not:", Value);
+                telemetry.update();
+            }
 
         }
 
