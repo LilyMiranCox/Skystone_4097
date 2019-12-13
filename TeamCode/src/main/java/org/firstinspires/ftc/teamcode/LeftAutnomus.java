@@ -7,6 +7,7 @@ import android.view.View;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,6 +22,7 @@ public class LeftAutnomus extends LinearOpMode {
     ColorSensor sensorColor;
     ModernRoboticsI2cRangeSensor rangeSensor;
     int RangeV;
+    CRServo Tail,Tail2;
     //Functions:
 
     void mySleep(long interval, String msg) {
@@ -34,10 +36,10 @@ public class LeftAutnomus extends LinearOpMode {
     }
 
     void Forward(double speed) {
-        FleftDrive.setPower(speed);
-        FrightDrive.setPower(-speed);
-        BleftDrive.setPower(speed);
-        BrightDrive.setPower(-speed);
+        FleftDrive.setPower(-speed);
+        FrightDrive.setPower(speed);
+        BleftDrive.setPower(-speed);
+        BrightDrive.setPower(speed);
     }
 
 
@@ -50,17 +52,18 @@ public class LeftAutnomus extends LinearOpMode {
 
 
     void StrafeLeft(double speed) {
-        FleftDrive.setPower(-speed);
-        FrightDrive.setPower(-speed);
-        BleftDrive.setPower(speed);
-        BrightDrive.setPower(speed);
-    }
-
-    void StrafeRight(double speed) {
         FleftDrive.setPower(speed);
         FrightDrive.setPower(speed);
         BleftDrive.setPower(-speed);
         BrightDrive.setPower(-speed);
+        //sleep(time);
+    }
+
+    void StrafeRight(double speed) {
+        FleftDrive.setPower(-speed);
+        FrightDrive.setPower(-speed);
+        BleftDrive.setPower(speed);
+        BrightDrive.setPower(speed);
 
     }
 
@@ -90,12 +93,11 @@ public class LeftAutnomus extends LinearOpMode {
         Stop();
     }
 
-    void BackTime(double speed, long time) {
-        FleftDrive.setPower(-speed);
-        FrightDrive.setPower(speed);
-        BleftDrive.setPower(-speed);
-        BrightDrive.setPower(speed);
-        sleep(time);
+    void BackTime(double speed) {
+        FleftDrive.setPower(speed);
+        FrightDrive.setPower(-speed);
+        BleftDrive.setPower(speed);
+        BrightDrive.setPower(-speed);
     }
     void LowerSlide(double speed, long time) {
         George.setPower(speed);
@@ -113,6 +115,7 @@ public class LeftAutnomus extends LinearOpMode {
         FrightDrive = hardwareMap.dcMotor.get("FR");
         BleftDrive = hardwareMap.dcMotor.get("RL");
         BrightDrive = hardwareMap.dcMotor.get("RR");
+        Tail=hardwareMap.crservo.get("SideTail");
         //George=hardwareMap.dcMotor.get("GrabberMotor");
 
         float hsvValues[] = {0F, 0F, 0F};
@@ -122,6 +125,7 @@ public class LeftAutnomus extends LinearOpMode {
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
 
         waitForStart();
+
 
 
         while (opModeIsActive()) {
@@ -148,6 +152,20 @@ public class LeftAutnomus extends LinearOpMode {
             else{
                 telemetry.addData("Not:", Value);
                 telemetry.update();
+            }
+
+            StrafeLeft(0.5);
+            if(RangeV<40) {
+                BackTime(0.25);
+                if(RangeV<10){
+                    StrafeRight(0.25);
+                }
+                if(Value<2){
+                    Stop();
+                    Tail.setPower(0.5);
+                    sleep(1000);
+                    Tail.setPower(0);
+                }
             }
 
         }

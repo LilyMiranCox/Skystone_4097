@@ -115,14 +115,14 @@ public class Holonomic extends OpMode {
         }*/
 
         if(gamepad1.y){//Chance first code
-            Lift1.setPower(0.4);
-            Lift2.setPower(-0.4);
+            Lift1.setPower(0.6);
+            Lift2.setPower(0.6);
         }
         else if(gamepad1.x){
-            Lift1.setPower(-0.3);
-            Lift2.setPower(0.3);
+            Lift1.setPower(-0.6);
+            Lift2.setPower(-0.6);
         }
-        else if(!gamepad1.dpad_down&& !gamepad1.dpad_up){
+        else if(!gamepad1.x && !gamepad1.y){
             Lift1.setPower(0);
             Lift2.setPower(0);
         }
