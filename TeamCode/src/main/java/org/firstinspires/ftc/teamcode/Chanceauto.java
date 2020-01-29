@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -10,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -19,8 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.Locale;
 
 @Autonomous(name="SkyStoneAutonomus", group="Autonomous")
-public class LeftAutnomus extends LinearOpMode {
-    DcMotor FleftDrive, BleftDrive, FrightDrive, BrightDrive, George;
+public class Chanceauto extends LinearOpMode {
+    DcMotor FleftDrive, BleftDrive, FrightDrive, BrightDrive, Slide, Lift, Grab1, Grab2;
     double Value =0;
     double Value2=0;
 
@@ -98,16 +96,51 @@ public class LeftAutnomus extends LinearOpMode {
         Stop();
     }
 
-    void BackTime(double speed) {
+    void BackTime(double speed, long time) {
         FleftDrive.setPower(speed);
         FrightDrive.setPower(-speed);
         BleftDrive.setPower(speed);
-        BrightDrive.setPower(-speed);
+        sleep(time);
+        Stop();
+
     }
-    void LowerSlide(double speed, long time) {
-        George.setPower(speed);
-        //sleep(time);
+
+    void LSlide(double speed, long time) {
+        Lift.setPower(speed);
+        sleep(time);
+        Stop();
     }
+
+    void RSlide(double speed, long time) {
+        Lift.setPower(-speed);
+        sleep(time);
+        Stop();
+    }
+
+    void LowerArm(double speed, long time) {
+        Lift.setPower(speed);
+        sleep(time);
+        Stop();
+    }
+
+    void Grab(double speed, long time) {
+        FleftDrive.setPower(-speed);
+        FrightDrive.setPower(speed);
+        BleftDrive.setPower(-speed);
+        BrightDrive.setPower(speed);
+        Grab1.setPower(speed);
+        Grab2.setPower(-speed);
+        sleep(time);
+        Stop();
+    }
+
+    void Ungrab(double speed, long time) {
+        Grab1.setPower(-speed);
+        Grab2.setPower(speed);
+        sleep(time);
+        Stop();
+    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -136,73 +169,35 @@ public class LeftAutnomus extends LinearOpMode {
         Tail.setDirection(CRServo.Direction.REVERSE);
 
 
-        while (opModeIsActive()) {
-            RangeV=rangeSensor.rawUltrasonic();
-            telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
-            telemetry.addData("raw optical", rangeSensor.rawOptical());
+        long time2=1000;
+        ForwardTime(time2,0.5);
 
-            telemetry.addData("Distance (cm)",
-                    String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-            //telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
-            //telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
-            //telemetry.update();
-       // while(Value >= 2) {
+        LowerArm(.6,100);
 
-            //Forward(0.3);
-            //sleep(500);
-            //Stop();
-            //Color Sensor Part:
-            /*if (sensorColor.blue() > sensorColor.red()){
-                stop();
-            }*/
+        LSlide(.6,100);
 
-            Value=(sensorColor.red()*sensorColor.green())/Math.pow(sensorColor.blue(), 2);
-            if(Value<2 && RangeV<13){
-                telemetry.addData("Found:", Value);
-                telemetry.update();
-            }
-            else{
-                telemetry.addData("Not:", Value);
-                telemetry.update();
-            }
+        ForwardTime(500,.5);
 
-            StrafeLeft(0.5);
-            if(RangeV<40) {
-                BackTime(0.25);
-                if(RangeV<10){
-                    StrafeRight(0.4);
-                }
-                if(Value<2){
-                    break;
-                }
-            }
+        Grab(1,500);
 
-        }
-        while(opModeIsActive()){
-            Value2=(sensorColor.red()*sensorColor.green())/Math.pow(sensorColor.blue(), 2);
-            Forward(0.25);
-            if(Value2>2){
-                Stop();
-                Tail.setPower(-0.9);
-                sleep(4000);
-                //Tail.setPower(0);
-                break;
-            }
-        }
-        /*
-        StrafeRight(0.5);
-        sleep(50);
-        Stop();
-        TurnRight(0.5);
+        BackTime(.5,1250);
+
+        TurnLeft(.5);
         sleep(500);
-        Stop();
-        while (opModeIsActive()){
-            StrafeRight(1);
-            if(BottomSensor.blue()>BottomSensor.red()){
-                sleep(500);
-                Stop();
-            }
-        }*/
+
+        ForwardTime(1000,1);
+
+        RSlide(1,50);
+
+        ForwardTime(500,.5);
+
+        Ungrab(1,100);
+
+        BackTime(.5,500);
+
+        LSlide(1,50);
+
+        BackTime(.5,1000);
 
     }
 }

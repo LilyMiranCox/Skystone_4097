@@ -14,10 +14,10 @@ public class Holonomic extends OpMode {
     DcMotor frontLeft;
     DcMotor rearRight;
     DcMotor rearLeft;
-    DcMotor Grab1, Grab2, Lift1, Lift2;
+    DcMotor Grab1, Grab2, Lift, Slide;
 
     //Servos
-    CRServo Tail,Tail2;
+    CRServo Block1,Block2;
 
     //Variables
     double stop=0.25;
@@ -43,17 +43,7 @@ public class Holonomic extends OpMode {
     @Override
     public void loop() {
         controls();
-        if(gamepad1.a){
-            count++;
-            //Float.compare(i,1.0f) == 0
-            if(count==1){
-                i=0.5f;
-            }
-            else if(count==2) {
-                i = 1.0f;
-                count=0;
-            }
-        }
+
     }
     public void runInitSequence()
     {
@@ -64,10 +54,11 @@ public class Holonomic extends OpMode {
         rearRight = hardwareMap.dcMotor.get("RR");
         Grab1=hardwareMap.dcMotor.get("Grab1");
         Grab2=hardwareMap.dcMotor.get("Grab2");
-        Tail=hardwareMap.crservo.get("Tail");
-        Tail2=hardwareMap.crservo.get("Tail2");
-        Lift1=hardwareMap.dcMotor.get("Lift1");
-        Lift2=hardwareMap.dcMotor.get("Lift2");
+        Block1=hardwareMap.crservo.get("Block");
+        Block2=hardwareMap.crservo.get("Block2");
+        Lift=hardwareMap.dcMotor.get("Lift");
+        Slide=hardwareMap.dcMotor.get("Slide");
+
 
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         rearRight.setDirection(DcMotor.Direction.REVERSE);
@@ -83,6 +74,7 @@ public class Holonomic extends OpMode {
     {
         holonomicFormula();
         setDriveChainPower();
+
         if(gamepad1.right_trigger > 0) {
             Grab1.setPower(gamepad1.right_trigger);
             Grab2.setPower(-gamepad1.right_trigger);
@@ -96,17 +88,19 @@ public class Holonomic extends OpMode {
             Grab2.setPower(0);
         }
 
+
         if(gamepad1.right_bumper) {
-            Tail.setPower(0.5);
-            Tail2.setPower(-0.5);
+            Block1.setPower(0.5);
+            Block2.setPower(-0.5);
         }
         else if(gamepad1.left_bumper) {
-            Tail.setPower(-0.5);
-            Tail2.setPower(0.5);
+            Block1.setPower(-0.5);
+            Block2.setPower(0.5);
         }
         else if(!gamepad1.right_bumper && !gamepad1.left_bumper){
-            Tail.setPower(0.0);
-            Tail2.setPower(0.0);
+         //   boolean control=true;
+            Block1.setPower(0.02);
+            Block2.setPower(-0.02);
         }
 
         /*if(Gravity) {
@@ -114,17 +108,26 @@ public class Holonomic extends OpMode {
             Lift2.setPower(-stop);
         }*/
 
+
         if(gamepad1.y){//Chance first code
-            Lift1.setPower(0.6);
-            Lift2.setPower(0.6);
+            Slide.setPower(-0.6);
         }
         else if(gamepad1.x){
-            Lift1.setPower(-0.6);
-            Lift2.setPower(-0.6);
+            Slide.setPower(0.6);
         }
         else if(!gamepad1.x && !gamepad1.y){
-            Lift1.setPower(0);
-            Lift2.setPower(0);
+            Slide.setPower(0);
+        }
+
+
+        if(gamepad1.a){//Chance first code
+            Lift.setPower(0.8);
+        }
+        else if(gamepad1.b){
+            Lift.setPower(-0.8);
+        }
+        else if(!gamepad1.a && !gamepad1.b){
+            Lift.setPower(0);
         }
 
     }
@@ -150,10 +153,10 @@ public class Holonomic extends OpMode {
         RL_power = Range.clip(RL_power_raw,-1 ,1);
         RR_power = Range.clip(RR_power_raw, -1, 1);
 
-        FL_power = i*FL_power;
-        FR_power = i*FR_power;
-        RL_power = i*RL_power;
-        RR_power=i*RR_power;
+        FL_power = FL_power;
+        FR_power = FR_power;
+        RL_power = RL_power;
+        RR_power=RR_power;
 
 
     }

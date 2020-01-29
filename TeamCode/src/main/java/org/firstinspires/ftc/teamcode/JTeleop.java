@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "JLinearTest", group = "Tele")
+@TeleOp(name = "TheMEACNUMdrive", group = "Tele")
 public class JTeleop extends OpMode {
         //Declaring variables:
         DcMotor Fleftmotor, Bleftmotor, Frightmotor, Brightmotor, George, Grabber;
@@ -26,7 +26,7 @@ public class JTeleop extends OpMode {
         //Grabber=hardwareMap.dcMotor.get("Grabber");
 
         //Servo
-        LTailGrabber=hardwareMap.crservo.get("LTail");
+        //LTailGrabber=hardwareMap.crservo.get("LTail");
         //RTailGrabber=hardwareMap.servo.get("RTail");
 
 
